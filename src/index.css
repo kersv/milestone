@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional input class (Tailwind shortcut) */
+.input {
+  @apply w-full border rounded px-3 py-2;
+}
