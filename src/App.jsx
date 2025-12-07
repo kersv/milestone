@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import Homepage from './pages/homepage'
+import Homepage from './pages/Homepage'
 import Job from './pages/job'
 import Auth from './pages/Auth'
 import Profile from './pages/profile'
