@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom'
 import { Routes, Route } from 'react-router-dom'
 import { supabase } from './supabase-client'
 import { Toaster } from 'react-hot-toast'
+import { CircleUser, LogOut } from 'lucide-react'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -37,27 +38,29 @@ function App() {
   return (
     <div className='flex flex-col min-h-screen'>
       {/* Header containing Milestone title and Logout button */}
-      <div className="flex justify-between items-center p-4 bg-white shadow-md">
+      <div className="flex justify-between items-center p-4 bg-gray-100 shadow-md">
         <>
-          <Link to='/' className="text-2xl font-bold text-blue-600">Milestone</Link>
+          <Link to='/' className="text-3xl font-bold text-black-600 font-['Snell_Roundhand']">Milestone</Link>
         </>
         {session && (
-        <>
-          <Link to='/profile'>Profile</Link>
-            <button
-              onClick={logout}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex"
-            >
-              Log Out
-            </button>
-        </>
+        <div className="flex items-center gap-4">
+          <Link to='/profile'>
+            <CircleUser className='size-6 mt-2 mb-2 cursor-pointer'/>
+          </Link>
+          <button
+            onClick={logout}
+            className="text-black px-2 rounded flex justify-center items-center gap-2"
+          >
+            <LogOut className='size-6 mt-2 mb-2 cursor-pointer'/>
+          </button>
+        </div>
         )}
       </div>
 
       {/* Main content area */}
       <div className='flex-grow bg-base-200 transition-colors duration-300'>
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           style: {
             transition: 'all 0.4s cubic-bezier(.21,1.02,.73,1)', // smoother transition

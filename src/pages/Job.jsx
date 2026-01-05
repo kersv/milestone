@@ -117,6 +117,7 @@ function Job() {
                 >
                   <option>Applied</option>
                   <option>Interviewing</option>
+                  <option>Offer Extended</option>
                   <option>Rejected</option>
                   <option>Accepted</option>
                 </select>

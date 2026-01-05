@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../supabase-client'
+import toast from 'react-hot-toast'
 
 function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -17,16 +18,20 @@ function Auth() {
       const {error: signUpError} = await supabase.auth.signUp({email: form.email, password: form.password})
       if (signUpError) {
             console.error('Error during sign up:', signUpError.message)
+            toast.error(signUpError.message)
             return
       }
+      toast.success('Sign up successful! Please check your email to confirm your account.')
     } else {
         // Handle sign-in logic
         // console.log('Signing in with', form)
         const {error: signInError} = await supabase.auth.signInWithPassword({email: form.email, password: form.password})
         if (signInError) {
             console.error('Error during sign in:', signInError.message)
+            toast.error(signInError.message)
             return
         }
+        toast.success('Sign in successful!')
     }
     }
 

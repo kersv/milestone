@@ -1,15 +1,18 @@
 import React, {useEffect, useMemo, useState, useCallback} from 'react'
 import { useJobs } from '../hooks/useJob'
-import { SquarePen, SquareX } from 'lucide-react'
+import { SquarePen, SquareX, RotateCcw } from 'lucide-react'
 import EditJobModal from '../components/EditJobModal'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase-client'
+import Button from '../components/Button'
+import Filter from '../components/Filter'
 
 function Homepage() {
      const {jobAppData, setJobData, addJob, getJobs, jobs, deleteJob, resetForm} = useJobs()
      const navigate = useNavigate()
      const [search, setSearch] = useState('')
      const [selectedStatuses, setSelectedStatuses] = useState([])
+     const [filterActive, setFilterActive] = useState(false)
 
       useEffect(() => {
         getJobs()
@@ -29,13 +32,13 @@ function Homepage() {
     const formatDate = (dateString) =>{
         if (!dateString) return ''
         const date = new Date(dateString)
-        const mm = String(date.getMonth() + 1).padStart(2, '0')
-        const dd = String(date.getDate()).padStart(2, '0')
-        const yyyy = date.getFullYear()
+        const mm = String(date.getUTCMonth() + 1).padStart(2, '0')
+        const dd = String(date.getUTCDate()).padStart(2, '0')
+        const yyyy = date.getUTCFullYear()
         return `${mm}/${dd}/${yyyy}`
     }
 
-    const statusOptions = ['Applied', 'Interviewing', 'Rejected', 'Accepted']
+    const statusOptions = ['Applied', 'Interviewing', 'Offer Extended', 'Rejected', 'Accepted']
 
     const filteredJobs = useMemo(() =>
         jobs.filter(job => (
@@ -55,46 +58,51 @@ function Homepage() {
     }, [memoizedGetJobs, resetForm]);
 
 
+    const resetFilter = () => {
+      console.log('Resetting filters');
+      setSelectedStatuses([]);
+    }
+
   return (
-    <div className="h-full bg-gray-100 p-6 overflow-hidden flex flex-col">
-      <input className="w-full mb-4 p-3 rounded-sm border-2 border-pink-500" placeholder='Search' value={search} onChange={e => setSearch(e.target.value)}/>
-      <div className="mb-4 flex gap-4 border-2 border-rose-500">
-        {statusOptions.map(status => (
-            <label key={status} className="flex items-center gap-1">
-            <input
-                type="checkbox"
-                checked={selectedStatuses.includes(status)}
-                onChange={e => {
-                if (e.target.checked) {
-                    setSelectedStatuses([...selectedStatuses, status])
-                } else {
-                    setSelectedStatuses(selectedStatuses.filter(s => s !== status))
-                }
-                }}
-            />
-            {status}
-            </label>
-        ))}
+    <div className="h-full bg-gray-50 p-6 overflow-hidden flex flex-col">
+      <input className="w-full mb-4 p-3 rounded-sm border-2 bg-green-50" placeholder='Search' value={search} onChange={e => setSearch(e.target.value)}/>
+      <RotateCcw className='size-6 mt-2 mb-2 cursor-pointer' onClick={resetFilter}/>
+
+      <div className='border-2 bg-gray-50 flex w-full flex-row flex-grow overflow-hidden'>
+      <div className='flex flex-col w-1/4 p-4 border-r-2 bg-green-50 space-y-4'>
+        {/* Form */}
+        <Button
+          label={filterActive ? 'Add Job' : 'Filter'}
+          onClick={() => setFilterActive(!filterActive)}
+        />
+        {filterActive ? (
+          <Filter
+            selectedStatuses={selectedStatuses}
+            setSelectedStatuses={setSelectedStatuses}
+          />
+        ): (
+            <form onSubmit={addJob} className= "shadow p-4 rounded space-y-4 max-w-xl border-2 bg-green-50 w-full">
+              <input className="input" placeholder="Company" value={jobAppData.company} onChange={(e) => setJobData({...jobAppData, company: e.target.value})}/>
+              <input className="input" placeholder="Job Title" value={jobAppData.title} onChange={(e) => setJobData({...jobAppData, title: e.target.value})}/>
+              <input className="input" placeholder="Job Posting Link" value={jobAppData.job_link} onChange={(e) => setJobData({...jobAppData, job_link: e.target.value})}/>
+              <input type="date" className="input" value={jobAppData.date_applied} onChange={(e) => setJobData({...jobAppData, date_applied: e.target.value})}/>
+              <select className="input" value={jobAppData.status} onChange={(e) => setJobData({...jobAppData, status: e.target.value})}>
+                <option>Applied</option>
+                <option>Interviewing</option>
+                <option>Offer Extended</option>
+                <option>Rejected</option>
+                <option>Accepted</option>
+              </select>
+              <textarea className="input" placeholder="Notes" value={jobAppData.notes} onChange={(e) => setJobData({...jobAppData, notes: e.target.value})}/>
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Application</button>
+            </form>
+        )}
       </div>
-      <div className='border-2 border-purple-500 flex w-full flex-row flex-grow overflow-hidden'>
-      {/* Form */}
-      <form onSubmit={addJob} className="bg-white shadow p-4 rounded space-y-4 max-w-xl border-2 border-blue-500 w-1/4">
-        <input className="input" placeholder="Company" value={jobAppData.company} onChange={(e) => setJobData({...jobAppData, company: e.target.value})}/>
-        <input className="input" placeholder="Job Title" value={jobAppData.title} onChange={(e) => setJobData({...jobAppData, title: e.target.value})}/>
-        <input className="input" placeholder="Job Posting Link" value={jobAppData.job_link} onChange={(e) => setJobData({...jobAppData, job_link: e.target.value})}/>
-        <input className="input" type="date" value={jobAppData.date_applied} onChange={(e) => setJobData({...jobAppData, date_applied: e.target.value})}/>
-        <select className="input" value={jobAppData.status} onChange={(e) => setJobData({...jobAppData, status: e.target.value})}>
-          <option>Applied</option>
-          <option>Interviewing</option>
-          <option>Rejected</option>
-          <option>Accepted</option>
-        </select>
-        <textarea className="input" placeholder="Notes" value={jobAppData.notes} onChange={(e) => setJobData({...jobAppData, notes: e.target.value})}/>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Application</button>
-      </form>
+
+
 
       {/* List */}
-        <div className="w-3/4 overflow-y-auto h-full border-2 border-green-500 ml-4 p-2 bg-green-50">
+        <div className="w-3/4 overflow-y-auto h-full border-2 ml-4 p-2 bg-green-50">
           {/* Grid container for both header and rows */}
           <div className="grid grid-cols-7 gap-x-4">
             {/* Header Row */}

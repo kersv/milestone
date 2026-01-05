@@ -14,13 +14,13 @@ export const useJobs = create((set,get) => ({
         company: '',
         title: '',
         job_link: '',
-        date_applied: '',
+        date_applied: new Date().toLocaleDateString('en-CA'),
         status: 'Applied',
         notes: ''
     },
 
     setJobData: ((jobAppData) => set({jobAppData})),
-    resetForm: () => set({jobAppData:{company:'', title:'', job_link:'', date_applied:'', status:'Applied', notes:''}}),
+    resetForm: () => set({jobAppData:{company:'', title:'', job_link:'', date_applied: new Date().toLocaleDateString('en-CA'), status:'Applied', notes:''}}),
 
     addJob: async(e) => {
         e.preventDefault()
