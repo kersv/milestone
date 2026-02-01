@@ -101,7 +101,7 @@ function Homepage() {
         ): (
             <form onSubmit={addJob} className= "shadow p-4 rounded space-y-4 max-w-xl border-2 bg-green-50 w-full">
               <input className="input" placeholder="Company" value={jobAppData.company} onChange={(e) => setJobData({...jobAppData, company: e.target.value})}/>
-              <input className="input" placeholder="Job Title" value={jobAppData.title} onChange={(e) => setJobData({...jobAppData, title: e.target.value})}/>
+              <input className="input" placeholder="Role" value={jobAppData.title} onChange={(e) => setJobData({...jobAppData, title: e.target.value})}/>
               <input className="input" placeholder="Job Posting Link" value={jobAppData.job_link} onChange={(e) => setJobData({...jobAppData, job_link: e.target.value})}/>
               <input type="date" className="input" value={jobAppData.date_applied} onChange={(e) => setJobData({...jobAppData, date_applied: e.target.value})}/>
               <select className="input" value={jobAppData.status} onChange={(e) => setJobData({...jobAppData, status: e.target.value})}>

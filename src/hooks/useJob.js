@@ -96,7 +96,9 @@ export const useJobs = create((set,get) => ({
             const { error } = await supabase.from('jobs').update(get().jobAppData).eq("id", id)
             if (error) {
                 console.error('Error in updateJob', error)
+                toast.error('Failed to update Job Application')
             }
+            toast.success('Job Application Updated')
             get().getJobs()
         }catch(err){
             console.log('updateJob')

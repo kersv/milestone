@@ -37,22 +37,22 @@ function Job() {
     }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl ">
       <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
         <ArrowLeftIcon className="size-4 mr-2" />
         Back to Dashboard
       </button>
 
       {/* TASK FORM */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className='card-body'>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-2 p-6 rounded-lg bg-green-50 shadow">
+        <div className='card-body '>
           <h2 className='card-title text-2xl mb-6'>Edit Job Application</h2>
-
           <form onSubmit={(e) => {
             e.preventDefault()
             updateJob(id, jobAppData)
           }} className='space-y-6'>
             {/* COMPANY NAME */}
+
             <div className="form-control">
                 <label className="label">
                   <span className="label-text text-base font-medium">Company Name</span>
@@ -69,11 +69,11 @@ function Job() {
             {/* JOB TITLE */}
             <div className='form-control'>
                 <label className='label'>
-                  <span className='label-text text-base font-medium'>Title</span>
+                  <span className='label-text text-base font-medium'>Role</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter Job Title"
+                  placeholder="Enter Job Role"
                   className="input input-bordered w-full"
                   value={jobAppData.title}
                   onChange={(e) => setJobData({ ...jobAppData, title: e.target.value })}
@@ -137,14 +137,14 @@ function Job() {
 
             {/* FORM ACTIONS */}
             <div className="flex justify-between mt-8">
-                <button type="button" onClick={handleDelete} className="btn btn-error">
+                <button type="button" onClick={handleDelete} className="btn btn-error bg-red-500 text-white rounded hover:bg-red-600 flex items-center p-2">
                   <Trash2Icon className="size-4 mr-2" />
                   Delete Job Application
                 </button>
 
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn btn-primary bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center p-2"
                   disabled={loading || !jobAppData.company || !jobAppData.status || !jobAppData.title}
                 >
                   {loading ? (
