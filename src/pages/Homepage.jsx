@@ -13,55 +13,67 @@ function Homepage() {
      const [search, setSearch] = useState('')
      const [selectedStatuses, setSelectedStatuses] = useState([])
      const [filterActive, setFilterActive] = useState(false)
+     const [selectedYears, setSelectedYears] = useState([])
 
-      useEffect(() => {
-        getJobs()
-        resetForm()
+
+     useEffect(() => {
+       getJobs()
+       resetForm()
       }, [])
 
       useEffect(() => {
         const channel = supabase.channel("jobs-channel")
         channel.on("postgres_changes", {event: "INSERT", schema: 'public', table: 'jobs'}, () => {
-            getJobs()
+          getJobs()
         }).subscribe((status) => {
-            console.log('Subscription status: ', status)
+          console.log('Subscription status: ', status)
         })
         return () => channel.unsubscribe();
       },[])
 
-    const formatDate = (dateString) =>{
+      const formatDate = (dateString) =>{
         if (!dateString) return ''
         const date = new Date(dateString)
         const mm = String(date.getUTCMonth() + 1).padStart(2, '0')
         const dd = String(date.getUTCDate()).padStart(2, '0')
         const yyyy = date.getUTCFullYear()
         return `${mm}/${dd}/${yyyy}`
-    }
+      }
 
-    const statusOptions = ['Applied', 'Interviewing', 'Offer Extended', 'Rejected', 'Accepted']
+      const filteredJobs = useMemo(() => {
+        return jobs.filter(job => {
+          return (
+            (job.company.toLowerCase().includes(search.toLowerCase()) ||
+            job.title.toLowerCase().includes(search.toLowerCase())) &&
+            (selectedStatuses.length === 0 || selectedStatuses.includes(job.status)) &&
+            (selectedYears.length === 0 || selectedYears.includes(new Date(job.date_applied).getUTCFullYear()))
+          )
+        })
+      }, [jobs, search, selectedStatuses, selectedYears])
 
-    const filteredJobs = useMemo(() =>
-        jobs.filter(job => (
-            job.company.toLowerCase().includes(search.toLowerCase()) ||
-            job.title.toLowerCase().includes(search.toLowerCase())
-            ) &&
-            (selectedStatuses.length === 0 || selectedStatuses.includes(job.status))
-    ),[jobs, search, selectedStatuses])
+      const Headers = ['Company', 'Role', 'Status', 'Date Applied', 'Job Link', 'Notes', 'Actions']
 
-    const Headers = ['Company', 'Job Title', 'Status', 'Date Applied', 'Job Link', 'Notes', 'Actions']
+      const memoizedGetJobs = useCallback(getJobs, [getJobs]);
 
-    const memoizedGetJobs = useCallback(getJobs, [getJobs]);
-
-    useEffect(() => {
+      useEffect(() => {
         memoizedGetJobs();
         return () => resetForm();
-    }, [memoizedGetJobs, resetForm]);
+      }, [memoizedGetJobs, resetForm]);
 
 
-    const resetFilter = () => {
-      console.log('Resetting filters');
-      setSelectedStatuses([]);
-    }
+      const yearsOptions = useMemo(() => {
+        return [...new Set(
+          jobs
+            .filter(job => job.date_applied)
+            .map(job => new Date(job.date_applied).getUTCFullYear())
+        )].sort((a, b) => b - a);
+      }, [jobs]);
+
+      const resetFilter = () => {
+        console.log('Resetting filters');
+        setSelectedStatuses([]);
+        setSelectedYears([]);
+      }
 
   return (
     <div className="h-full bg-gray-50 p-6 overflow-hidden flex flex-col">
@@ -79,6 +91,12 @@ function Homepage() {
           <Filter
             selectedStatuses={selectedStatuses}
             setSelectedStatuses={setSelectedStatuses}
+            resetFilter={resetFilter}
+            filteredJobs={filteredJobs}
+            selectedYears={selectedYears}
+            setSelectedYears={setSelectedYears}
+            yearsOptions={yearsOptions}
+
           />
         ): (
             <form onSubmit={addJob} className= "shadow p-4 rounded space-y-4 max-w-xl border-2 bg-green-50 w-full">
@@ -94,12 +112,11 @@ function Homepage() {
                 <option>Accepted</option>
               </select>
               <textarea className="input" placeholder="Notes" value={jobAppData.notes} onChange={(e) => setJobData({...jobAppData, notes: e.target.value})}/>
-              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Application</button>
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={resetFilter}>Add Application</button>
+              <button type="button" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700" onClick={resetForm}>Reset</button>
             </form>
         )}
       </div>
-
-
 
       {/* List */}
         <div className="w-3/4 overflow-y-auto h-full border-2 ml-4 p-2 bg-green-50">
@@ -107,7 +124,7 @@ function Homepage() {
           <div className="grid grid-cols-7 gap-x-4">
             {/* Header Row */}
             {Headers.map((header) => (
-              <p key={header} className="font-bold text-lg p-2 sticky top-0">
+              <p key={header} className="font-bold text-lg p-2 sticky top-0 flex items-center">
                 {header}
               </p>
             ))}
@@ -121,7 +138,9 @@ function Homepage() {
                 <p className="p-2 border-b">{job.status}</p>
                 <p className="p-2 border-b">{formatDate(job.date_applied)}</p>
                 <a href={job.job_link} className="p-2 border-b text-blue-500 underline truncate" target="_blank" rel="noopener noreferrer">Link</a>
-                <p className="p-2 border-b truncate">{job.notes}</p>
+                <p className="p-2 border-b truncate" title={job.notes} aria-label={job.notes}>
+                  {job.notes}
+                </p>
                 <div className="p-2 border-b flex items-center gap-10 space-between justify-center m-0">
                   <button className='size-5' onClick={() => navigate(`/job/${job.id}`)}>
                     <SquarePen/>

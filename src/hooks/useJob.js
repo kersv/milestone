@@ -53,7 +53,6 @@ export const useJobs = create((set,get) => ({
                 console.error('error in getJobs ', error.message)
                 return
             }
-            console.log(data)
             set({jobs:data})
         }catch(err){
             console.log('getJobs func went wrong ', err)
