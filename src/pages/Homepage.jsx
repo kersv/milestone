@@ -112,8 +112,10 @@ function Homepage() {
                 <option>Accepted</option>
               </select>
               <textarea className="input" placeholder="Notes" value={jobAppData.notes} onChange={(e) => setJobData({...jobAppData, notes: e.target.value})}/>
+              <div className="flex justify-between ">
               <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={resetFilter}>Add Application</button>
               <button type="button" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700" onClick={resetForm}>Reset</button>
+              </div>
             </form>
         )}
       </div>

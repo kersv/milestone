@@ -38,7 +38,7 @@ function Job() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl ">
-      <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
+      <button onClick={() => navigate("/")} className="btn btn-ghost mb-8 flex items-center p-2 bg-gray-200 rounded hover:bg-gray-300">
         <ArrowLeftIcon className="size-4 mr-2" />
         Back to Dashboard
       </button>

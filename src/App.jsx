@@ -8,9 +8,11 @@ import { Routes, Route } from 'react-router-dom'
 import { supabase } from './supabase-client'
 import { Toaster } from 'react-hot-toast'
 import { CircleUser, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
   const [session, setSession] = useState(null)
+  const navigate = useNavigate()
 
   const fetchSession = async () => {
     const currentSession = await supabase.auth.getSession()
@@ -48,7 +50,10 @@ function App() {
             <CircleUser className='size-6 mt-2 mb-2 cursor-pointer'/>
           </Link>
           <button
-            onClick={logout}
+            onClick={() => {
+              logout()
+              navigate('/')
+            }}
             className="text-black px-2 rounded flex justify-center items-center gap-2"
           >
             <LogOut className='size-6 mt-2 mb-2 cursor-pointer'/>
