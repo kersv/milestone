@@ -40,12 +40,20 @@ function App() {
     }
   }, [])
 
-  const logout = async () => {
-    await supabase.auth.signOut()
-  }
-
   return (
     <div className='flex flex-col h-screen bg-gray-950 overflow-hidden'>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#1e2130',
+            color: '#e2e8f0',
+            border: '1px solid #374151',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          },
+          duration: 3000,
+        }}
+      />
       {/* Header — only shown when authenticated */}
       {session && (
         <div className="flex justify-between items-center px-6 py-4 bg-gray-900 border-b border-gray-800">
@@ -61,7 +69,7 @@ function App() {
             </Link>
             <button
               onClick={async () => {
-                await logout()
+                await supabase.auth.signOut()
                 navigate('/auth')
               }}
               className="text-gray-400 hover:text-gray-100 transition-colors"
@@ -74,18 +82,6 @@ function App() {
 
       {/* Main content area */}
       <div className='flex-1 overflow-auto'>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          style: {
-            background: '#1e2130',
-            color: '#e2e8f0',
-            border: '1px solid #374151',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-          },
-          duration: 3000,
-        }}
-      />
       {loading ? (
         <div className="flex justify-center items-center h-full p-8 text-gray-400">Loading...</div>
       ) : (
