@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BriefcaseIcon, SearchIcon, FilterIcon } from 'lucide-react'
-import Dashboard from '../assets/dashboard.png'
+import Dashboard from '../assets/Dashboard.png'
 import Summary from '../assets/Summary.png'
 
 
