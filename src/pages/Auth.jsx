@@ -36,14 +36,14 @@ function Auth() {
     }
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Sign Up' : 'Sign In'}
+    <div className="bg-gray-950 min-h-screen flex items-center justify-center px-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-8 text-center text-gray-100">
+          {isSignUp ? 'Create account' : 'Welcome back'}
         </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="email">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5" htmlFor="email">
               Email
             </label>
             <input
@@ -53,11 +53,12 @@ function Auth() {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="input"
+              placeholder="you@example.com"
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2" htmlFor="password">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5" htmlFor="password">
               Password
             </label>
             <input
@@ -67,19 +68,20 @@ function Auth() {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="input"
+              placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-lg transition-colors"
           >
             {isSignUp ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
-        <div className="mt-4 text-center">
+        <div className="mt-5 text-center">
           <button
-            className="text-blue-600 hover:underline"
+            className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
             onClick={() => setIsSignUp(!isSignUp)}
           >
             {isSignUp

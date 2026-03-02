@@ -24,23 +24,20 @@ export const useJobs = create((set,get) => ({
 
     addJob: async(e) => {
         e.preventDefault()
-
         try{
             const { data } = await supabase.auth.getUser()
             const email = data.user?.email
             const jobData = {...get().jobAppData, email}
             const {error} = await supabase.from("jobs").insert(jobData).single()
             if (error) {
-                console.error('addJob supabase error', error.message)
+                toast.error('Failed to add job application')
                 return
             }
             get().resetForm()
             get().getJobs()
             toast.success('Job Application Added')
-
-
         }catch(err){
-            console.log('addJob func went wrong ', err)
+            toast.error('Something went wrong')
         }
     },
 
@@ -50,58 +47,65 @@ export const useJobs = create((set,get) => ({
             const email = emailData.user?.email
             const {error, data} = await supabase.from('jobs').select("*").eq('email', email).order('created_at', {ascending: false})
             if(error){
-                console.error('error in getJobs ', error.message)
+                set({ error: error.message })
                 return
             }
-            set({jobs:data})
+            set({jobs:data, error: null})
         }catch(err){
-            console.log('getJobs func went wrong ', err)
+            set({ error: 'Failed to load jobs' })
         }
     },
 
     getJob: async(id) => {
+        set({ loading: true, error: null })
         try{
-            const {error, data} = await supabase.from('jobs').select("*").eq('id', id).single()
+            const { data: emailData } = await supabase.auth.getUser()
+            const email = emailData.user?.email
+            const {error, data} = await supabase.from('jobs').select("*").eq('id', id).eq('email', email).single()
             if(error){
-                console.error('error in getJobs ', error.message)
+                set({ error: error.message })
                 return
             }
-            console.log(data)
             set({
                 currentJob:data,
                 jobAppData:data,
             })
         }catch(err){
-            console.log('getJobs func went wrong ', err)
+            set({ error: 'Failed to load job' })
+        } finally {
+            set({ loading: false })
         }
     },
 
     deleteJob: async(id) => {
         try{
-
-            const { error } = await supabase.from('jobs').delete().eq("id", id)
+            const { data: emailData } = await supabase.auth.getUser()
+            const email = emailData.user?.email
+            const { error } = await supabase.from('jobs').delete().eq("id", id).eq("email", email)
             if (error) {
-                console.error('Error in deleteJob', error)
+                toast.error('Failed to delete job application')
+                return
             }
-            console.log('DELETE SUCCESSFUL')
             get().getJobs()
             toast.success('Job Application Deleted')
         }catch(err){
-            console.log('delete')
+            toast.error('Something went wrong')
         }
     },
 
     updateJob: async(id) => {
         try{
-            const { error } = await supabase.from('jobs').update(get().jobAppData).eq("id", id)
+            const {data: emailData } = await supabase.auth.getUser()
+            const email = emailData.user?.email
+            const { error } = await supabase.from('jobs').update(get().jobAppData).eq("id", id).eq("email", email)
             if (error) {
-                console.error('Error in updateJob', error)
                 toast.error('Failed to update Job Application')
+                return
             }
             toast.success('Job Application Updated')
             get().getJobs()
         }catch(err){
-            console.log('updateJob')
+            toast.error('Something went wrong')
         }
     }
 

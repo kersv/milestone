@@ -2,7 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional input class (Tailwind shortcut) */
-.input {
-  @apply w-full border rounded px-3 py-2;
+@layer base {
+  body {
+    @apply bg-gray-950 text-gray-100;
+  }
+}
+
+@layer components {
+  .input {
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2
+           text-gray-100 placeholder-gray-500
+           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+           transition-colors;
+  }
 }
